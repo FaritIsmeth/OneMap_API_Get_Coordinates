@@ -648,91 +648,12 @@ class OneMapClient():
 			return
 
 if __name__ == "__main__":
-	email = "faritismeth22@gmail.com"
-	password = "tiaTIT53@v2"
+	email = ""
+	password = ""
 
 	Client = OneMapClient(email, password)
-	#print(Client.get_token())
-	#print(Client.check_expired_and_refresh_token())
-	#result=Client.search(string, page_num=page_num)
-	#mylist=['738099']
-	#result=Client.search(mylist[0])
-	#print(result)
-	'''
-	get_data = {}
-	counter = buffer_size = 0
-	page_num = 1
-	timer = 10
-
-	print('Please enter name of condo to search:\n')
-	string = str(input())
-
-	print(f'You have entered {string} as your search query')
-
 	
-	while page_num != 10:
-		result=Client.search(string, page_num=page_num)
-		if result.get("found") != 0:
-			while counter != 10:
-				try:
-					get_address = result.get("results")[counter]['ADDRESS']
-					print(get_address)
-					counter += 1
-					time.sleep(1)
-			#page_num += 1
-			#print(f"Moving to page {page_num}")
-		#else:
-			#print("No more addresses found.")
-	'''
-	'''                
-	result1=Client.search("Sol Acres",page_num=1)
-	result2=Client.search("Sol Acres",page_num=2)
-	result3=Client.search("Sol Acres",page_num=3)
-	result4=Client.search("Sol Acres",page_num=4)
-	result5=Client.search("Sol Acres",page_num=5)
-	#print(len(result.get("results")))
-	print(result1.get("found"))
-	print(result2.get("found"))
-	print(result3.get("found"))
-	print(result4.get("found"))
-	print(result5.get("found"))
-	if result1.get("found") != 0:
-		print(result1.get("results")[3]['ADDRESS'])
-		get_res = result1.get("results")[3]['ADDRESS']
-		with open('get_name.csv', 'w') as myfile:
-			myfile.write('ADDRESS\n')
-			myfile.write(f'{get_res}\n')
-	else:
-		print("Empty")
-	print(f'\n\n\n')
-	if result2.get("found") != 0:
-		print(result2.get("results"))
-	else:
-		print("Empty")
-	print(f'\n\n\n')
-	if result3.get("found") != 0:
-		print(result3.get("results"))
-	else:
-		print("Empty")
-	print(f'\n\n\n')
-	if result4.get("found") != 0:
-		print(result4.get("results"))
-	else:
-		print("Empty")
-	print(f'\n\n\n')
-	if result5.get("found") != 0:
-		print(result5.get("results"))
-	else:
-		print("Empty")
-	print(f'\n\n\n')
-
-
-	'''
-
-	#print(result.get("results")[0]['ROAD_NAME'])
-	#print(result)
-	
-	df = pandas.read_csv('[POI Collection_Maintenance]_WS_V.1_[GFG POIs Review] - raw file.csv',dtype=str)
+	df = pandas.read_csv('input.csv',dtype=str)
 	df_length = len(df)
 	start_time = datetime.now()
 	get_data={}
@@ -743,9 +664,6 @@ if __name__ == "__main__":
 	#loop through the entire csv
 	
 	while counter != df_length:
-		#result = Client.search(df.at[counter, 'cluster_lat,long'])
-
-		#get_data dictionary with counter as key = lat at position 0, lon at position 1
 
 		get_data[counter] = df.at[counter, 'postal code v2']
 		print(f'\n\nSearching row {counter+1} of {df_length}, postal code: {get_data[counter]}. {df_length-(counter+1)} rows left.')
@@ -762,10 +680,6 @@ if __name__ == "__main__":
 			with open('get_address.csv','a') as myfile:
 				myfile.write(f'{get_data[counter]},"Invalid","Invalid"\n')
 			counter += 1
-		#print(f'\n\n{result.get("results")[0]}')
-		#with open('get_address.csv','a') as myfile:
-			#myfile.write(f'{get_data[counter]},{get_lat},{get_lon}\n')
-			#myfile.write(f'{get_lon}\n')
 		while timer !=0:
 			print(f'Sleeping for {timer} seconds')
 			timer -= 1
@@ -781,57 +695,3 @@ if __name__ == "__main__":
 			print("-"*50)
 			counter_iteration = 0
 			iteration_timer=120
-
-
-		'''
-		#get_data[counter] = [float((df.at[counter,'lat'])),float((df.at[counter,'long']))]
-		print(f'\n\nSearching row {counter+1} of {df_length}, lat,lon: {get_data[counter]}. {df_length-(counter+1)} rows left.')
-
-		#try change the buffer from 0 to n, we want the closest-possible match of the lat,lon to an address
-		while True:
-			try:
-				result = Client.reverse_geocode_WGS84(get_data[counter], buffer=buffer_size, address_type="All", other_features=False)
-				#print(len(result.get("GeocodeInfo")[0])) #if this causes error, we know data is null
-				print(f'\n\n{result.get("GeocodeInfo")[0]}')
-			except:
-				print(f"\n\nNo result with buffer = {buffer_size}")
-				while timer != 0:
-					#sleep for 10 seconds as per API's limitations
-					print(f'Sleeping for {timer} seconds')
-					timer -= 1
-					time.sleep(1)
-				#set timer variable back to 10 for the next iteration
-				timer=10
-				buffer_size+=1
-				if buffer_size == 50:
-					print(f'Buffer size has reached limit of {buffer_size}, continuing to next row instead')
-					break
-				else:
-					print(f"Trying with buffer = {buffer_size} instead\n\n\n")
-			else:
-				buffer_size=0
-				get_data[counter] = result
-				break
-
-		#append result to csv file
-		with open('get_address.csv', 'a') as myfile:
-			myfile.write(f'{get_data[counter]}\n\n')
-
-		time_elapsed = datetime.now() - start_time
-		print("\n\n")
-		print("Time elapsed (HH:MM:SS) {}".format(time_elapsed))
-		print("-"*100)
-		print("\n\n\n")
-		#go to the next row in csv
-		counter += 1
-		#sleep for 10 seconds as per API's limitations
-		while timer != 0:
-			print(f'Sleeping for {timer} seconds')
-			timer -= 1
-			time.sleep(1)
-		timer=10
-		'''
-	#time_elapsed = datetime.now() - start_time
-	#print("Time elapsed (HH:MM:SS) {}".format(time_elapsed))
-
-	
